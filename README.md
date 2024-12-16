@@ -27,7 +27,7 @@ $ docker compose -p local-dev-storage -f docker/docker-compose.yaml up -d --buil
 다른 프로젝트 레포지토리에서 docker compose를 실행해서 replication과 연결하기 위해선 docker network를 통해 연결해야한다
 
 ### 1. Docker Network 연결
-docker-compose.yml에 network 설정을 추가합니다:
+docker-compose.yml에 network 설정을 추가한다:
 
 ```docker
 services:
