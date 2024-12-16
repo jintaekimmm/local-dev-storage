@@ -1,0 +1,61 @@
+services:
+  local-db-master:
+    image: mysql:8.0.27
+    platform: linux/amd64
+    container_name: local-db-master
+    command: --secure-file-priv=""
+    ports:
+      - "3306:3306"
+    volumes:
+      - local-db-master-volume:/var/lib/mysql
+      - ./mysql/master_my.cnf:/etc/mysql/my.cnf
+      - ./mysql/init-scripts/master:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: test
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4096M
+        reservations:
+          cpus: "2"
+          memory: 4096M
+    networks:
+      local-storage-net: { }
+
+  local-db-slave:
+    image: mysql:8.0.27
+    platform: linux/amd64
+    container_name: local-db-slave
+    ports:
+      - "3307:3306"
+    volumes:
+      - local-db-slave-volume:/var/lib/mysql
+      - ./mysql/slave_my.cnf:/etc/mysql/my.cnf
+      - ./mysql/init-scripts/slave/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./mysql/init-scripts/slave/configure-slave.sh:/docker-entrypoint-initdb.d/2-configure-slave.sh
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: Asia/Seoul
+    depends_on:
+      - local-db-master
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 4096M
+        reservations:
+          cpus: "2"
+          memory: 4096M
+    networks:
+      local-storage-net: { }
+
+volumes:
+  local-db-master-volume:
+  local-db-slave-volume:
+
+networks:
+  local-storage-net:
+    external: true

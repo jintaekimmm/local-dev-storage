@@ -1,0 +1,9 @@
+[mysqld]
+server-id=2
+relay_log=mysql-relay-bin
+bind-address = 0.0.0.0
+read_only=1
+slave-skip-errors = 1032,1061,1062
+
+secure-file-priv = NULL
+!includedir /etc/mysql/conf.d/
